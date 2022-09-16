@@ -1,5 +1,5 @@
-## [Check it out](https://mood-tracker-production.up.railway.app/)
-~>  https://mood-tracker-production.up.railway.app/
+## [Check it out](https://mood-tracker-production-redbolder.up.railway.app/)
+~>  https://mood-tracker-production-redbolder.up.railway.app/
 
 ## Database set up
 ### Step 1
