@@ -4,8 +4,9 @@ import Image from 'next/image';
 import styles from '../styles/Home.module.css';
 import Link from "next/link";
 import {useEffect, useState} from "react";
-import {Mood} from "../models/Mood";
+import {Mood} from "../databaseAccessLayer/Mood";
 import MoodItem from "../components/Mood/MoodItem";
+import MoodRepository from "../services/moodRepository.react";
 
 enum OrderByEnum {
     Date,
@@ -13,24 +14,35 @@ enum OrderByEnum {
 }
 
 const Home: NextPage = () => {
-    const [moodsList, setMoodList] = useState<Mood[]>([
-        {
-            moodId: 1,
-            feelingText: 'ayy',
-            createdAt: 23234332,
-            rating: 7
-        }
-    ]);
+    const [moodsList, setMoodList] = useState<Mood[]>([]);
 
     useEffect(() => {
+        (async function () {
+            const allMoods = await MoodRepository.getAll();
 
+            setMoodList([...allMoods]);
+        })();
     }, []);
+
+    const deleteCallback = async (moodId: number) => {
+        setMoodList((currentMoodList) => {
+            let newList = currentMoodList.filter(mood => mood.moodId !== moodId);
+            return [...newList];
+        });
+        await MoodRepository.remove(moodId);
+    };
 
     const orderByHandler = (orderBy: OrderByEnum) => {
         if (orderBy === OrderByEnum.Date) {
-
+            setMoodList((currentMoodList) => {
+                let newList = currentMoodList.sort((mood1, mood2) => new Date(mood2.createdAt).getTime() - new Date(mood1.createdAt).getTime());
+                return [...newList];
+            });
         } else if (orderBy === OrderByEnum.Rate) {
-
+            setMoodList((currentMoodList) => {
+                let newList = currentMoodList.sort((mood1, mood2) => mood2.rating - mood1.rating);
+                return [...newList];
+            });
         } else {
             debugger;
             alert("ERROR");
@@ -46,13 +58,15 @@ const Home: NextPage = () => {
                 </button>
             </div>
             <div className={'flex justify-center'}>
-                <button className={'btn btn-black'} onClick={() => orderByHandler(OrderByEnum.Date)}>Order By Date</button>
-                <button className={'btn btn-black'} onClick={() => orderByHandler(OrderByEnum.Rate)}>Order By Rating</button>
+                <button className={'btn btn-black'} onClick={() => orderByHandler(OrderByEnum.Date)}>Order By Date
+                </button>
+                <button className={'btn btn-black'} onClick={() => orderByHandler(OrderByEnum.Rate)}>Order By Rating
+                </button>
             </div>
-            <div className={'flex justify-center'}>
+            <div className={'flex justify-center items-center flex-col'}>
                 {
                     moodsList.map((moodItem: Mood, index) => (
-                        <MoodItem key={moodItem.moodId} moodItem={moodItem} />
+                        <MoodItem key={moodItem.moodId} moodItem={moodItem} deleteCallback={deleteCallback} />
                     ))
                 }
             </div>

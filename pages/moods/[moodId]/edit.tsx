@@ -1,17 +1,30 @@
 import {NextPage} from "next";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {useRouter} from "next/router";
-import MoodRepository from "../../services/moodRepository.react";
+import MoodRepository from "../../../services/moodRepository.react";
 
-const AddMood: NextPage = () => {
+const EditMood: NextPage = () => {
     const router = useRouter();
+    const { moodId } = router.query;
+    let moodIdInt = Array.isArray(moodId) ? parseInt(moodId.join("")) : parseInt(moodId ?? '');
 
     const [notes, setNotes] = useState<string>("");
     const [rating, setRating] = useState<number>(0);
 
-    const addMoodHandle = async () => {
+    useEffect(() => {
+        if (moodId !== undefined) {
+            (async function() {
+                let mood = await MoodRepository.getOne(moodIdInt);
+                setNotes(mood.feelingText);
+                setRating(mood.rating);
+            })();
+        }
+    }, [moodId]);
+
+    const updateMoodHandle = async () => {
         try {
-            await MoodRepository.add({
+            await MoodRepository.update({
+                moodId: moodIdInt,
                 feelingText: notes,
                 rating: rating
             });
@@ -36,10 +49,10 @@ const AddMood: NextPage = () => {
                 <input className={'bg-zinc-600 rounded ml-1'} type={'number'} max={10} min={0} value={rating} onChange={(event) => setRating(parseInt(event.target.value))}/>
             </div>
             <div className={'flex justify-center'}>
-                <button className={'btn btn-black'} onClick={() => addMoodHandle()}>Submit</button>
+                <button className={'btn btn-black'} onClick={() => updateMoodHandle()}>Submit</button>
             </div>
         </div>
     );
 };
 
-export default AddMood;
+export default EditMood;

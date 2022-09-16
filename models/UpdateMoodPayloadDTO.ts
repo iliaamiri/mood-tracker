@@ -1,6 +1,5 @@
-export interface Mood {
+export interface UpdateMoodPayloadDTO {
     moodId: number;
-    createdAt: number;
     rating: number;
     feelingText: string;
 }

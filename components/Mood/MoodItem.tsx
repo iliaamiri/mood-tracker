@@ -1,18 +1,21 @@
-import {Mood} from "../../models/Mood";
+import {Mood} from "../../databaseAccessLayer/Mood";
+import {useRouter} from "next/router";
 
 interface MoodItemProps {
-    moodItem: Mood
+    moodItem: Mood,
+    deleteCallback: (moodId: number) => Promise<void>,
 }
 
-export default function MoodItem({moodItem}: MoodItemProps) {
+export default function MoodItem({moodItem, deleteCallback}: MoodItemProps) {
+    const router = useRouter();
 
     const renderRatings = () => {
         let result = '';
         for (let i = 0; i < 10; i++) {
             if (i < moodItem.rating) {
-                result += '★';
+                result += '🌟';
             } else {
-                result += '☆';
+                result += '✰';
             }
         }
         return result;
@@ -29,11 +32,17 @@ export default function MoodItem({moodItem}: MoodItemProps) {
     };
 
     return (
-        <div className={'flex flex-col border-b-[2px]'}>
+        <div className={'flex flex-col w-1/4 border-[2px] mb-2 mt-2 pb-5 rounded-3xl'}>
             <p className={'text-center'}>{renderDate()}</p>
-            <p className={'text-center'}>{moodItem.feelingText}</p>
-            <div>
+            <p className={'text-center pt-3 pb-3 text-3xl'}>{moodItem.feelingText}</p>
+            <div className={'flex justify-center'}>
                 <p>{renderRatings()}</p>
+            </div>
+            <div className={'flex justify-center'}>
+                <button className={'btn btn-black'} onClick={() => router.push("/moods/" + moodItem.moodId + "/edit")}>Edit
+                </button>
+                <button className={'btn btn-black'} onClick={async () => await deleteCallback(moodItem.moodId)}>Delete
+                </button>
             </div>
         </div>
     );
