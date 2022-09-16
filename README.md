@@ -1,3 +1,6 @@
+## [Check it out](https://mood-tracker-production.up.railway.app/)
+~>  https://mood-tracker-production.up.railway.app/
+
 ## Database set up
 ### Step 1
 Make any database with these columns. (These are just MySQL syntax but you can conncet to any database).
