@@ -1,3 +1,23 @@
+## Database set up
+### Step 1
+Make any database with these columns. (These are just MySQL syntax but you can conncet to any database).
+```mysql
+CREATE TABLE `mood` (
+  `moodId` int(11) NOT NULL AUTO_INCREMENT,
+  `feelingText` varchar(64) NOT NULL,
+  `createdAt` datetime NOT NULL DEFAULT curtime(),
+  `rating` int(11) DEFAULT 0,
+  PRIMARY KEY (`moodId`),
+  CONSTRAINT `CONSTRAINT_1` CHECK (`rating` <= 10 and `rating` >= 0)
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4;
+```
+### Step 2
+Go to `/prisma/schema.prisma`. Then update your `provider` accordingly (`postgresql`, `mysql`, `sqlite`, `sqlserver`, `mongodb`, `cockroachdb`).  
+### Step 3
+Make a `.env` file under the root folder `/`. Then add a `DATABASE_URL` environment vairable and make it equal to your connection string.
+
+---
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
